@@ -45,7 +45,6 @@ RUN useradd -U -m superset && \
 COPY superset /usr/local/bin
 VOLUME /etc/superset
 WORKDIR /home/superset
-ADD /etc/superset /etc/superset
 
 # Deploy application
 EXPOSE 8088
