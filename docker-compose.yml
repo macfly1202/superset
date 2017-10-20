@@ -1,10 +1,50 @@
-version: '3'
+#version: '3'
+#services:
+#  superset:
+#    build:
+#      context: .
+#      args:
+#        SUPERSET_VERSION: 0.20.4
+#    image: macfly1202/superset
+#    ports:
+#      - 8088:8088
+
+version: '2'
 services:
-  superset:
-    build:
-      context: .
-      args:
-        SUPERSET_VERSION: 0.20.4
-    image: macfly1202/superset
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    volumes:
+      #- redis:/data
+      - /data/docker-volumes/superset/redis:/data
+  mysql:
+    image: mysql:5.7
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: superset
+      MYSQL_DATABASE: superset
+      MYSQL_USER: superset
+      MYSQL_PASSWORD: superset
     ports:
-      - 8088:8088
+      - "3306:3306"
+    volumes:
+      - /data/docker-volumes/superset/mysql:/var/lib/mysql
+  
+  superset:
+    #build: .
+    image: macfly1202/superset:0.20.4
+    restart: unless-stopped
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      MAPBOX_API_KEY: ${MAPBOX_API_KEY}
+    ports:
+      - "8088:8088"
+    volumes:
+      - "/data/docker-volumes/superset/superset/superset_config.py:/home/superset/superset_config.py"
+volumes:
+  mysql:
+    external: false
+  redis:
+    external: false
