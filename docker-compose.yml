@@ -5,6 +5,6 @@ services:
       context: .
       args:
         SUPERSET_VERSION: 0.20.4
-    image: amancevice/superset
+    image: macfly1202/superset
     ports:
       - 8088:8088
